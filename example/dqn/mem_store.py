@@ -1,7 +1,7 @@
 import numpy as np
 from torch.autograd import Variable
 import torch
-
+import ray
 class MemoryStore:
     def __init__(self, capacity, size):
         self.memory = np.zeros((capacity, size)) 

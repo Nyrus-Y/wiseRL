@@ -15,8 +15,8 @@ cfg = [
         "actor": EnvActor,
         "num": 8
     },
-
 ]
+
 def train():
     wiseRl = WiseRL(cfg, num_gpus = 1)
     wiseRl.run()
