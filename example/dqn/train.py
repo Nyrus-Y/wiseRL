@@ -1,8 +1,9 @@
 from example.dqn.env_actor import EnvActor
 from example.dqn.learner_actor import LearnerActor
-from wiseRL.core.wise_rl  import WiseRL
+from wiseRL.core.wise_rl import WiseRL
 
 import config
+
 cfg = [
     {
         "name": "learner",
@@ -17,9 +18,11 @@ cfg = [
     },
 ]
 
+
 def train():
-    wiseRl = WiseRL(cfg, num_gpus = 1)
+    wiseRl = WiseRL(cfg, num_gpus=1)
     wiseRl.run()
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     train()

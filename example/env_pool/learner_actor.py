@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -7,13 +6,15 @@ import numpy as np
 import ray
 from example.env_pool.net import Actor, Critic
 import example.env_pool.config as config
-from wiseRL.core.wise_rl  import WiseRL
+from wiseRL.core.wise_rl import WiseRL
 from wiseRL.core.learner import Learner
 from torch.distributions import Categorical
 from torch.utils.data.sampler import BatchSampler, SubsetRandomSampler
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print("device",device)
+print("device", device)
+
+
 class LearnerActor(Learner):
     def __init__(self):
         self.batch_size = config.BATCH_SIZE
@@ -39,9 +40,6 @@ class LearnerActor(Learner):
         else:
             self.optimizer_actor = torch.optim.Adam(self.actor.parameters(), lr=self.lr_a)
             self.optimizer_critic = torch.optim.Adam(self.critic.parameters(), lr=self.lr_c)
-        
-      
-      
 
     def evaluate(self, s):  # When evaluating the policy, we select the action with the highest probability
         s = torch.unsqueeze(torch.tensor(s, dtype=torch.float), 0).to(device)
@@ -58,8 +56,8 @@ class LearnerActor(Learner):
         return a.cpu().numpy()[0], a_logprob.cpu().numpy()[0]
 
     def update(self, replay_buffer, total_steps):
-        #print("buffer_id2",buffer_id)
-        #replay_buffer=ray.get(buffer_id)
+        # print("buffer_id2",buffer_id)
+        # replay_buffer=ray.get(buffer_id)
         s, a, a_logprob, r, s_, dw, done = replay_buffer.numpy_to_tensor()  # Get training data
         """
             Calculate the advantage using GAE
@@ -116,13 +114,13 @@ class LearnerActor(Learner):
 
         if self.use_lr_decay:  # Trick 6:learning rate Decay
             self.lr_decay(total_steps)
-        
+
         param = self.actor.state_dict()
         if device.type != "cpu":
             for name, mm in param.items():
-	            param[name]= mm.cpu()
-        param_id =ray.put(param)
-        self.fire('action', param_id )
+                param[name] = mm.cpu()
+        param_id = ray.put(param)
+        self.fire('action', param_id)
 
     def lr_decay(self, total_steps):
         lr_a_now = self.lr_a * (1 - total_steps / self.max_train_steps)
